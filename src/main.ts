@@ -7,6 +7,22 @@ const photos: Photo[] = [
   { src: '/assets/memory-01.webp', title: 'The little moments', alt: 'A favorite birthday memory' },
   { src: '/assets/memory-02.webp', title: 'The kind of light', alt: 'A warm shared memory' },
   { src: '/assets/memory-03.webp', title: 'Always worth celebrating', alt: 'A joyful memory together' },
+  { src: '/assets/memory-04.webp', title: 'A sunny-day smile', alt: 'A smiling portrait outdoors in the sunshine' },
+  { src: '/assets/memory-05.webp', title: 'A moment in the trees', alt: 'A portrait on a leafy, tree-lined path' },
+  { src: '/assets/memory-06.webp', title: 'A little campus glow', alt: 'A candid smile during the day' },
+  { src: '/assets/memory-07.webp', title: 'Golden-hour energy', alt: 'A bright portrait outside' },
+  { src: '/assets/memory-08.webp', title: 'Soft light, big smile', alt: 'A relaxed portrait in warm light' },
+  { src: '/assets/memory-09.webp', title: 'The main-character frame', alt: 'A joyful portrait in a sunlit setting' },
+  { src: '/assets/memory-10.webp', title: 'A little garden magic', alt: 'A peaceful garden-side moment' },
+  { src: '/assets/memory-11.webp', title: 'Just being you', alt: 'A smiling portrait in a patterned outfit' },
+  { src: '/assets/memory-12.webp', title: 'One for the memories', alt: 'A candid, everyday portrait' },
+  { src: '/assets/memory-13.webp', title: 'A favorite kind of day', alt: 'A playful candid moment' },
+  { src: '/assets/memory-14.webp', title: 'Out and about', alt: 'A full-length outdoor portrait' },
+  { src: '/assets/memory-15.webp', title: 'The camera loves you', alt: 'A warm indoor portrait' },
+  { src: '/assets/memory-16.webp', title: 'A little throwback', alt: 'A joyful childhood portrait' },
+  { src: '/assets/memory-17.webp', title: 'Always unmistakably you', alt: 'A relaxed portrait outdoors' },
+  { src: '/assets/memory-18.webp', title: 'A smile to keep', alt: 'A cheerful close-up portrait' },
+  { src: '/assets/memory-19.webp', title: 'One more lovely moment', alt: 'A sunny outdoor portrait' },
 ];
 
 const app = document.querySelector<HTMLDivElement>('#app');
@@ -151,11 +167,15 @@ function updatePhoto(index: number) {
   photoImage.style.opacity = '0';
   window.setTimeout(() => {
     const photo = photos[currentPhoto];
-    photoImage.src = photo.src;
     photoImage.alt = photo.alt;
     photoCaption.textContent = photo.title;
-    photoIndex.textContent = `FRAME ${String(currentPhoto + 1).padStart(2, '0')} / 03`;
-    photoImage.style.opacity = '1';
+    photoIndex.textContent = `FRAME ${String(currentPhoto + 1).padStart(2, '0')} / ${String(photos.length).padStart(2, '0')}`;
+    photoImage.onload = () => { photoImage.style.opacity = '1'; };
+    photoImage.onerror = () => { photoImage.style.opacity = '1'; };
+    photoImage.src = photo.src;
+    // Fetch just the next frame in the background after the current image is requested.
+    const next = new Image();
+    next.src = photos[(currentPhoto + 1) % photos.length].src;
   }, 220);
 }
 
