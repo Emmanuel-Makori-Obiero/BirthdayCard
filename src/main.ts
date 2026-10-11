@@ -125,6 +125,7 @@ let currentPhoto = 0;
 let soundOn = false;
 let audioContext: AudioContext | undefined;
 let ambientGain: GainNode | undefined;
+type AudioContextConstructor = typeof AudioContext;
 
 function showToast(message: string) {
   toast.textContent = message;
@@ -147,7 +148,12 @@ function updatePhoto(index: number) {
 
 function startAmbient() {
   if (!audioContext) {
-    audioContext = new AudioContext();
+    const AudioContextClass = (window.AudioContext ?? (window as Window & { webkitAudioContext?: AudioContextConstructor }).webkitAudioContext);
+    if (!AudioContextClass) {
+      showToast('Ambient sound is unavailable in this browser.');
+      return;
+    }
+    audioContext = new AudioContextClass();
     ambientGain = audioContext.createGain();
     ambientGain.gain.value = 0;
     ambientGain.connect(audioContext.destination);
@@ -260,8 +266,27 @@ function loadAvatar(path: string, target: THREE.Group, fallback: THREE.Group) {
     fallback.visible = false;
   }, undefined, () => { /* fallback remains visible */ });
 }
-loadAvatar('/models/star-avatar.glb', leftAvatar, leftAvatar);
-loadAvatar('/models/moon-avatar.glb', rightAvatar, rightAvatar);
+// The generated GLBs are intentionally lazy-loaded so the opening scene and page scroller
+// stay responsive on mobile and slower connections. Lightweight Three.js fallbacks show first.
+const avatarChapter = $('#chapter-three');
+let avatarsRequested = false;
+const loadGeneratedAvatars = () => {
+  if (avatarsRequested) return;
+  avatarsRequested = true;
+  loadAvatar('/models/star-avatar.glb', leftAvatar, leftAvatar);
+  loadAvatar('/models/moon-avatar.glb', rightAvatar, rightAvatar);
+};
+if ('IntersectionObserver' in window && avatarChapter) {
+  const avatarObserver = new IntersectionObserver((entries) => {
+    if (entries.some((entry) => entry.isIntersecting)) {
+      loadGeneratedAvatars();
+      avatarObserver.disconnect();
+    }
+  }, { rootMargin: '480px 0px' });
+  avatarObserver.observe(avatarChapter);
+} else {
+  window.setTimeout(loadGeneratedAvatars, 1200);
+}
 
 let targetRotation = 0;
 let currentRotation = 0;

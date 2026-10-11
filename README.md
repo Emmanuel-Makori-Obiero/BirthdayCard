@@ -19,4 +19,6 @@ pnpm dev
 
 Then open `http://localhost:3000`.
 
+Do not double-click `index.html` or open it with a `file://` URL; Vite must serve the ES modules and local assets.
+
 The 3D avatar files live in `public/models/` and the supplied photos live in `public/assets/`.
