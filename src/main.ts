@@ -440,16 +440,23 @@ let avatarVisible = false;
 if ('IntersectionObserver' in window && avatarChapter) {
   const avatarObserver = new IntersectionObserver((entries) => {
     avatarVisible = entries.some((entry) => entry.isIntersecting);
-    if (avatarVisible && !danceRequested) {
-      danceRequested = true;
-      loadDanceAvatar();
-      requestAnimationFrame(animate);
+    if (avatarVisible && !document.hidden) {
+      if (!danceRequested) {
+        danceRequested = true;
+        loadDanceAvatar();
+      }
+      clock.start();
+      scheduleAvatarFrame();
+    } else {
+      clock.stop();
+      if (frameHandle) cancelAnimationFrame(frameHandle);
+      frameHandle = 0;
     }
   }, { rootMargin: '480px 0px' });
   avatarObserver.observe(avatarChapter);
 } else {
   avatarVisible = true;
-  window.setTimeout(() => { loadDanceAvatar(); requestAnimationFrame(animate); }, 1200);
+  window.setTimeout(() => { loadDanceAvatar(); scheduleAvatarFrame(); }, 1200);
 }
 
 let targetRotation = 0;
@@ -470,11 +477,19 @@ window.addEventListener('resize', resizeStage);
 resizeStage();
 const clock = new THREE.Clock();
 let lastRenderTime = 0;
+let frameHandle = 0;
+function scheduleAvatarFrame() {
+  if (frameHandle) return;
+  frameHandle = requestAnimationFrame(() => {
+    frameHandle = 0;
+    animate();
+  });
+}
 function animate() {
   if (!avatarVisible || document.hidden) return;
   const frameTime = performance.now();
   if (lowPowerDevice && frameTime - lastRenderTime < 1000 / 30) {
-    requestAnimationFrame(animate);
+    scheduleAvatarFrame();
     return;
   }
   lastRenderTime = frameTime;
@@ -488,10 +503,17 @@ function animate() {
   leftAvatar.rotation.y = Math.sin(elapsed * .5) * .12;
   rightAvatar.rotation.y = -Math.sin(elapsed * .55) * .12;
   renderer.render(scene, camera);
-  requestAnimationFrame(animate);
+  scheduleAvatarFrame();
 }
 document.addEventListener('visibilitychange', () => {
-  if (!document.hidden && avatarVisible) requestAnimationFrame(animate);
+  if (document.hidden) {
+    clock.stop();
+    if (frameHandle) cancelAnimationFrame(frameHandle);
+    frameHandle = 0;
+  } else if (avatarVisible) {
+    clock.start();
+    scheduleAvatarFrame();
+  }
 });
 
 }
