@@ -1,5 +1,4 @@
-import * as THREE from 'three';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import type { Group } from 'three';
 import './style.css';
 
 type Photo = { src: string; title: string; alt: string };
@@ -30,7 +29,7 @@ app.innerHTML = `
       <div class="brand">a film by <i>someone who loves you</i></div>
       <div class="mini-label">chapter 01 / 05</div>
     </header>
-    <audio id="birthday-song" src="/audio/chikwere.mp3" loop preload="metadata"></audio>
+    <audio id="birthday-song" src="/audio/chikwere.mp3" loop preload="none"></audio>
     <button class="ambient" id="ambient-button" aria-label="Play Chikwere" title="Play Chikwere" aria-pressed="false"><span aria-hidden="true">♫</span><span class="music-label">Chikwere</span></button>
     <div class="progress" id="progress" style="width: 0%"></div>
 
@@ -57,7 +56,7 @@ app.innerHTML = `
           </div>
           <div>
             <div class="film-frame">
-              <img id="photo-image" src="${photos[0].src}" alt="${photos[0].alt}" />
+              <img id="photo-image" src="${photos[0].src}" alt="${photos[0].alt}" loading="lazy" decoding="async" fetchpriority="low" />
               <div class="image-wash"></div>
               <div class="film-caption" id="photo-caption">${photos[0].title}</div>
             </div>
@@ -227,7 +226,10 @@ window.addEventListener('scroll', () => {
   progress.style.width = `${max ? (window.scrollY / max) * 100 : 0}%`;
 });
 
-// A lightweight Three.js stage keeps the experience interactive even if the generated GLBs are still processing.
+// Load the 3D engine only when the visitor approaches this chapter.
+async function initAvatarExperience() {
+  const THREE = await import('three');
+  const { GLTFLoader } = await import('three/examples/jsm/loaders/GLTFLoader.js');
 const canvas = $('#avatar-canvas') as HTMLCanvasElement;
 const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -261,7 +263,7 @@ const leftAvatar = makeFallbackAvatar(0x253764, 0x15172f, -.92);
 const rightAvatar = makeFallbackAvatar(0x5f2c5b, 0x2d1b39, .92);
 stage.add(leftAvatar, rightAvatar);
 const loader = new GLTFLoader();
-function loadAvatar(path: string, target: THREE.Group, fallback: THREE.Group) {
+function loadAvatar(path: string, target: Group, fallback: Group) {
   loader.load(path, (gltf) => {
     const model = gltf.scene;
     model.scale.setScalar(1.05);
@@ -321,3 +323,20 @@ function animate() {
   requestAnimationFrame(animate);
 }
 animate();
+
+}
+
+const avatarBoot = $('#chapter-three');
+if ('IntersectionObserver' in window && avatarBoot) {
+  const bootObserver = new IntersectionObserver((entries) => {
+    if (entries.some((entry) => entry.isIntersecting)) {
+      bootObserver.disconnect();
+      void initAvatarExperience();
+    }
+  }, { rootMargin: '300px 0px' });
+  bootObserver.observe(avatarBoot);
+} else {
+  const start3D = () => { void initAvatarExperience(); };
+  if ('requestIdleCallback' in window) window.requestIdleCallback(start3D, { timeout: 2500 });
+  else globalThis.setTimeout(start3D, 1500);
+}
