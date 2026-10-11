@@ -1,0 +1,17 @@
+{
+  "name": "melwish",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview --host 0.0.0.0"
+  },
+  "dependencies": {
+    "@types/three": "^0.186.0",
+    "three": "^0.181.2",
+    "vite": "^7.1.9",
+    "typescript": "^5.9.2"
+  }
+}
