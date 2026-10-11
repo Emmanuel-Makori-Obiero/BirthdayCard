@@ -388,6 +388,8 @@ const fbxLoader = new FBXLoader();
 let danceMixer: import('three').AnimationMixer | undefined;
 function loadDanceAvatar() {
   fbxLoader.load('/models/HipHopDancing.fbx', (model) => {
+    const danceClip = model.animations.find((clip) => clip.tracks.length > 0);
+    if (!danceClip) return; // Keep the built-in dancers visible if the FBX has no usable take.
     model.updateMatrixWorld(true);
     const bounds = new THREE.Box3().setFromObject(model);
     const size = bounds.getSize(new THREE.Vector3());
@@ -401,10 +403,8 @@ function loadDanceAvatar() {
     stage.add(model);
     leftAvatar.visible = false;
     rightAvatar.visible = false;
-    if (model.animations.length) {
-      danceMixer = new THREE.AnimationMixer(model);
-      danceMixer.clipAction(model.animations[0]).play();
-    }
+    danceMixer = new THREE.AnimationMixer(model);
+    danceMixer.clipAction(danceClip).setLoop(THREE.LoopRepeat, Infinity).play();
   }, undefined, () => { /* Built-in characters remain as the lightweight fallback. */ });
 }
 const avatarChapter = $('#chapter-three');
