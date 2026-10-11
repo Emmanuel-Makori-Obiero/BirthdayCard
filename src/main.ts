@@ -5,9 +5,9 @@ import './style.css';
 type Photo = { src: string; title: string; alt: string };
 
 const photos: Photo[] = [
-  { src: '/assets/memory-01.jpeg', title: 'The little moments', alt: 'A favorite birthday memory' },
-  { src: '/assets/memory-02.jpeg', title: 'The kind of light', alt: 'A warm shared memory' },
-  { src: '/assets/memory-03.jpeg', title: 'Always worth celebrating', alt: 'A joyful memory together' },
+  { src: '/assets/memory-01.webp', title: 'The little moments', alt: 'A favorite birthday memory' },
+  { src: '/assets/memory-02.webp', title: 'The kind of light', alt: 'A warm shared memory' },
+  { src: '/assets/memory-03.webp', title: 'Always worth celebrating', alt: 'A joyful memory together' },
 ];
 
 const app = document.querySelector<HTMLDivElement>('#app');
@@ -19,10 +19,10 @@ app.innerHTML = `
     <div class="intro-overlay" id="intro-overlay">
       <div class="intro-curtain" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
       <div class="intro-copy">
-        <div class="eyebrow">A private little film · press play when she is ready</div>
-        <h1>For a girl who makes the world feel <em>brighter.</em></h1>
-        <p>Three tiny scenes, a few favorite frames, and one surprise that has been waiting for the right moment.</p>
-        <button class="cta" id="start-button">Begin the surprise <span class="arrow">↗</span></button>
+        <div class="eyebrow">a private note · press play when she is ready</div>
+        <h1>Hey birthday girl, this one’s <em>for you.</em></h1>
+        <p>No long speech. Just a few favourite faces, some camera-roll evidence, and a tiny bit of chaos.</p>
+        <button class="cta" id="start-button">Press play <span class="arrow">↗</span></button>
       </div>
     </div>
 
@@ -38,20 +38,20 @@ app.innerHTML = `
         <div class="timeline-line" aria-hidden="true"></div>
         <div class="chapter-inner kicker-grid">
           <div>
-            <div class="chapter-label">01 / the opening shot</div>
-            <h2>Some people bring their own <em>sunlight.</em></h2>
-            <div class="scroll-hint"><i></i> keep going, the good part is close</div>
+            <div class="chapter-label">01 / okay, listen</div>
+            <h2>You make ordinary days feel like <em>something.</em></h2>
+            <div class="scroll-hint"><i></i> keep going, we have receipts</div>
           </div>
-          <p class="chapter-dek">This is a small collection of the moments that make you, <strong>you</strong> — warm, unforgettable, and impossible not to celebrate.</p>
+          <p class="chapter-dek">So here are three little reminders of why people keep choosing your laugh, your energy, and your face in every group photo.</p>
         </div>
       </section>
 
       <section class="chapter photo-chapter" id="chapter-two">
         <div class="chapter-inner photo-layout">
           <div class="photo-copy">
-            <div class="chapter-label">02 / found footage</div>
-            <h3>The best memories rarely announce <em>themselves.</em></h3>
-            <p>They hide in the laugh between takes, the blurry frame, the look that says everything without saying a word.</p>
+            <div class="chapter-label">02 / camera roll evidence</div>
+            <h3>Proof that you are very easy to <em>love.</em></h3>
+            <p>Exhibit A: the smile. Exhibit B: the way a normal day becomes a story when you are in it.</p>
             <div class="photo-index" id="photo-index">FRAME 01 / 03</div>
           </div>
           <div>
@@ -63,7 +63,8 @@ app.innerHTML = `
             <div class="photo-controls" aria-label="Photo controls">
               <button class="icon-btn" id="photo-prev" aria-label="Previous photo">←</button>
               <button class="icon-btn" id="photo-next" aria-label="Next photo">→</button>
-              <span class="mini-label">drag the story forward</span>
+              <span class="mini-label">tap the arrows · keep the evidence moving</span>
+              <button class="note-btn" id="note-button">one more thing</button>
             </div>
           </div>
         </div>
@@ -73,15 +74,15 @@ app.innerHTML = `
         <div class="chapter-inner">
           <div class="avatar-intro">
             <div>
-              <div class="chapter-label">03 / the tiny guardians</div>
-              <h3>Every great story needs a little <em>magic.</em></h3>
+              <div class="chapter-label">03 / your tiny hype crew</div>
+              <h3>We hired two small weirdos to <em>celebrate you.</em></h3>
             </div>
-            <p>Meet the two tiny guardians of this birthday film. Drag to turn the scene. Tap the stage to wake the stars.</p>
+            <p>They are not very good at speeches, but they are excellent at standing around looking festive. Drag them around. Tap for a little mischief.</p>
           </div>
           <div class="avatar-stage">
             <canvas id="avatar-canvas" aria-label="Interactive 3D birthday avatars"></canvas>
             <div class="avatar-badge">made of stardust<span>and good wishes</span></div>
-            <div class="avatar-hint">drag to explore · tap for a little magic</div>
+            <div class="avatar-hint">drag them around · tap for a surprise</div>
           </div>
         </div>
       </section>
@@ -89,9 +90,9 @@ app.innerHTML = `
       <section class="chapter reveal-chapter" id="chapter-four">
         <div class="reveal-card" id="reveal-card">
           <div class="chapter-label">04 / the moment</div>
-          <h3>Ready for the part where the sky says <em>happy birthday?</em></h3>
-          <p>There is a whole constellation of good things waiting on the other side of this button. Take a breath. Make a wish.</p>
-          <button class="cta" id="reveal-button">Open the surprise <span class="arrow">✦</span></button>
+          <h3>Okay. Now for the bit you were trying to <em>scroll past.</em></h3>
+          <p>Your birthday assignment: accept the love, make a ridiculous wish, and let everyone spoil you a little.</p>
+          <button class="cta" id="reveal-button">Show me the big one <span class="arrow">✦</span></button>
         </div>
         <div class="confetti" id="confetti" aria-hidden="true"></div>
       </section>
@@ -99,10 +100,10 @@ app.innerHTML = `
       <section class="chapter final-chapter" id="chapter-five">
         <div class="chapter-inner">
           <div class="chapter-label">05 / end credits</div>
-          <h3>Happy birthday to our favorite <em>plot twist.</em></h3>
-          <p>May this next chapter be full of soft mornings, loud laughter, unexpected magic, and people who love you loudly.</p>
+          <h3>Happy birthday. <em>Seriously.</em></h3>
+          <p>I hope this year gives you more reasons to laugh until your stomach hurts, more soft places to land, and at least one excellent plot twist.</p>
           <button class="cta secondary" id="replay-button">Replay the story <span class="arrow">↻</span></button>
-          <div class="signature">with all the love in the world</div>
+          <div class="signature">from your favourite people</div>
         </div>
       </section>
     </main>
@@ -121,6 +122,7 @@ const toast = $('#toast') as HTMLDivElement;
 const photoImage = $('#photo-image') as HTMLImageElement;
 const photoCaption = $('#photo-caption') as HTMLDivElement;
 const photoIndex = $('#photo-index') as HTMLDivElement;
+const noteButton = $('#note-button') as HTMLButtonElement;
 let currentPhoto = 0;
 let soundOn = false;
 let audioContext: AudioContext | undefined;
@@ -132,6 +134,18 @@ function showToast(message: string) {
   toast.classList.add('show');
   window.setTimeout(() => toast.classList.remove('show'), 2200);
 }
+
+const tinyNotes = [
+  'Official verdict: still iconic.',
+  'Someone thinks you are very pretty. It is me. And probably everyone.',
+  'You make the group chat better by existing.',
+  'This is your sign to order the dessert.',
+];
+let noteIndex = 0;
+noteButton?.addEventListener('click', () => {
+  showToast(tinyNotes[noteIndex % tinyNotes.length]);
+  noteIndex += 1;
+});
 
 function updatePhoto(index: number) {
   currentPhoto = (index + photos.length) % photos.length;
