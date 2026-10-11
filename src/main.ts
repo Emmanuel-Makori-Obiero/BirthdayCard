@@ -30,7 +30,8 @@ app.innerHTML = `
       <div class="brand">a film by <i>someone who loves you</i></div>
       <div class="mini-label">chapter 01 / 05</div>
     </header>
-    <button class="ambient" id="ambient-button" aria-label="Toggle ambient sound" title="Toggle ambient sound">◌</button>
+    <audio id="birthday-song" src="/audio/chikwere.mp3" loop preload="metadata"></audio>
+    <button class="ambient" id="ambient-button" aria-label="Play Chikwere" title="Play Chikwere" aria-pressed="false"><span aria-hidden="true">♫</span><span class="music-label">Chikwere</span></button>
     <div class="progress" id="progress" style="width: 0%"></div>
 
     <main>
@@ -124,10 +125,9 @@ const photoCaption = $('#photo-caption') as HTMLDivElement;
 const photoIndex = $('#photo-index') as HTMLDivElement;
 const noteButton = $('#note-button') as HTMLButtonElement;
 let currentPhoto = 0;
-let soundOn = false;
-let audioContext: AudioContext | undefined;
-let ambientGain: GainNode | undefined;
-type AudioContextConstructor = typeof AudioContext;
+const birthdaySong = $('#birthday-song') as HTMLAudioElement;
+const musicButton = $('#ambient-button') as HTMLButtonElement;
+birthdaySong.volume = 0.28;
 
 function showToast(message: string) {
   toast.textContent = message;
@@ -160,42 +160,32 @@ function updatePhoto(index: number) {
   }, 220);
 }
 
-function startAmbient() {
-  if (!audioContext) {
-    const AudioContextClass = (window.AudioContext ?? (window as Window & { webkitAudioContext?: AudioContextConstructor }).webkitAudioContext);
-    if (!AudioContextClass) {
-      showToast('Ambient sound is unavailable in this browser.');
-      return;
+async function toggleMusic() {
+  if (birthdaySong.paused) {
+    try {
+      await birthdaySong.play();
+      musicButton.setAttribute('aria-pressed', 'true');
+      musicButton.setAttribute('aria-label', 'Pause Chikwere');
+      musicButton.title = 'Pause Chikwere';
+      musicButton.classList.add('is-playing');
+    } catch {
+      showToast('Tap the music button to play Chikwere.');
     }
-    audioContext = new AudioContextClass();
-    ambientGain = audioContext.createGain();
-    ambientGain.gain.value = 0;
-    ambientGain.connect(audioContext.destination);
-    const notes = [130.81, 196, 261.63, 329.63];
-    notes.forEach((frequency, i) => {
-      const oscillator = audioContext!.createOscillator();
-      const gain = audioContext!.createGain();
-      oscillator.type = 'sine';
-      oscillator.frequency.value = frequency;
-      gain.gain.value = i === 0 ? .02 : .011;
-      oscillator.connect(gain).connect(ambientGain!);
-      oscillator.start();
-    });
+  } else {
+    birthdaySong.pause();
+    musicButton.setAttribute('aria-pressed', 'false');
+    musicButton.setAttribute('aria-label', 'Play Chikwere');
+    musicButton.title = 'Play Chikwere';
+    musicButton.classList.remove('is-playing');
   }
-  if (audioContext.state === 'suspended') void audioContext.resume();
-  soundOn = !soundOn;
-  if (ambientGain) ambientGain.gain.setTargetAtTime(soundOn ? .45 : 0, audioContext.currentTime, .5);
-  const ambientButton = $('#ambient-button') as HTMLButtonElement;
-  ambientButton.textContent = soundOn ? '◉' : '◌';
-  showToast(soundOn ? 'A little ambient magic, on.' : 'Ambient magic, off.');
 }
 
 startButton.addEventListener('click', () => {
   intro.classList.add('is-hidden');
-  startAmbient();
+  void toggleMusic();
   window.setTimeout(() => $('#chapter-one')?.scrollIntoView({ behavior: 'smooth' }), 320);
 });
-$('#ambient-button')?.addEventListener('click', startAmbient);
+musicButton.addEventListener('click', () => { void toggleMusic(); });
 $('#photo-prev')?.addEventListener('click', () => updatePhoto(currentPhoto - 1));
 $('#photo-next')?.addEventListener('click', () => updatePhoto(currentPhoto + 1));
 
