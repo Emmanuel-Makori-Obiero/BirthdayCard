@@ -350,11 +350,19 @@ document.addEventListener('visibilitychange', () => {
 
 // Load the 3D engine only when the visitor approaches this chapter.
 async function initAvatarExperience() {
-  const THREE = await import('three');
+const THREE = await import('three');
   const { FBXLoader } = await import('three/examples/jsm/loaders/FBXLoader.js');
 const canvas = $('#avatar-canvas') as HTMLCanvasElement;
-const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+const lowPowerDevice = window.matchMedia('(max-width: 760px)').matches || (navigator.hardwareConcurrency > 0 && navigator.hardwareConcurrency <= 4);
+let renderer: import('three').WebGLRenderer;
+try {
+  renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: !lowPowerDevice, powerPreference: 'low-power' });
+} catch {
+  canvas.hidden = true;
+  showToast('This device cannot play the 3D dance, but enjoy the birthday memories.');
+  return;
+}
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, lowPowerDevice ? 1 : 1.5));
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(28, 1, .1, 100);
@@ -442,8 +450,15 @@ function resizeStage() {
 window.addEventListener('resize', resizeStage);
 resizeStage();
 const clock = new THREE.Clock();
+let lastRenderTime = 0;
 function animate() {
   if (!avatarVisible || document.hidden) return;
+  const frameTime = performance.now();
+  if (lowPowerDevice && frameTime - lastRenderTime < 1000 / 30) {
+    requestAnimationFrame(animate);
+    return;
+  }
+  lastRenderTime = frameTime;
   const delta = clock.getDelta();
   const elapsed = clock.elapsedTime;
   danceMixer?.update(delta);
