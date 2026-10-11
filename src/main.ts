@@ -58,7 +58,14 @@ app.innerHTML = `
             <h2>You make ordinary days feel like <em>something.</em></h2>
             <div class="scroll-hint"><i></i> keep going, we have receipts</div>
           </div>
-          <p class="chapter-dek">So here are three little reminders of why people keep choosing your laugh, your energy, and your face in every group photo.</p>
+          <div class="kicker-side">
+            <p class="chapter-dek">So here are a few little reminders of why people keep choosing your laugh, your energy, and your face in every group photo.</p>
+            <div class="memory-sprinkle" aria-label="A few favorite photos">
+              <img src="/assets/memory-04.webp" alt="A sunny-day smile" loading="lazy" decoding="async" />
+              <img src="/assets/memory-08.webp" alt="A soft-light portrait" loading="lazy" decoding="async" />
+              <img src="/assets/memory-14.webp" alt="A favorite outdoor moment" loading="lazy" decoding="async" />
+            </div>
+          </div>
         </div>
       </section>
 
@@ -100,12 +107,23 @@ app.innerHTML = `
             <div class="avatar-badge">made of stardust<span>and good wishes</span></div>
             <div class="avatar-hint">drag them around · tap for a surprise</div>
           </div>
+          <div class="memory-ribbon" aria-label="More little moments">
+            <img src="/assets/memory-06.webp" alt="A candid daytime smile" loading="lazy" decoding="async" />
+            <img src="/assets/memory-10.webp" alt="A peaceful garden-side moment" loading="lazy" decoding="async" />
+            <img src="/assets/memory-15.webp" alt="A warm indoor portrait" loading="lazy" decoding="async" />
+            <span>little moments, big love</span>
+          </div>
         </div>
       </section>
 
       <section class="chapter reveal-chapter" id="chapter-four">
         <div class="reveal-card" id="reveal-card">
           <div class="chapter-label">04 / the moment</div>
+          <div class="reveal-memories" aria-label="A few more birthday memories">
+            <img src="/assets/memory-09.webp" alt="A sunlit portrait" loading="lazy" decoding="async" />
+            <img src="/assets/memory-12.webp" alt="A candid everyday moment" loading="lazy" decoding="async" />
+            <img src="/assets/memory-18.webp" alt="A cheerful close-up portrait" loading="lazy" decoding="async" />
+          </div>
           <h3>Okay. Now for the bit you were trying to <em>scroll past.</em></h3>
           <p>Your birthday assignment: accept the love, make a ridiculous wish, and let everyone spoil you a little.</p>
           <button class="cta" id="reveal-button">Show me the big one <span class="arrow">✦</span></button>
@@ -119,6 +137,8 @@ app.innerHTML = `
           <h3>Happy birthday. <em>Seriously.</em></h3>
           <p>I hope this year gives you more reasons to laugh until your stomach hurts, more soft places to land, and at least one excellent plot twist.</p>
           <button class="cta secondary" id="replay-button">Replay the story <span class="arrow">↻</span></button>
+          <img class="final-memory" src="/assets/memory-19.webp" alt="One more lovely outdoor portrait" loading="lazy" decoding="async" />
+          <div class="siz-note">You are the best, <em>my siz.</em></div>
           <div class="signature">from your favourite people</div>
         </div>
       </section>
