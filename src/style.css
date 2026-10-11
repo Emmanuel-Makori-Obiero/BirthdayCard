@@ -220,3 +220,20 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--gold); outline-
 @media (prefers-reduced-motion: reduce) {
   .cinema-tile img { transition: none; }
 }
+
+.surprise-note[hidden] { display: none; }
+.surprise-note { width: min(780px, calc(100vw - 48px)); display: grid; grid-template-columns: minmax(150px, .72fr) minmax(0, 1.5fr); align-items: center; gap: clamp(22px, 5vw, 54px); margin: 36px auto 0; padding: clamp(18px, 4vw, 34px); border: 1px solid rgba(244,203,123,.35); background: linear-gradient(135deg, rgba(244,203,123,.11), rgba(238,128,111,.08)); box-shadow: var(--shadow); text-align: left; }
+.surprise-note.is-revealed { animation: rise .75s cubic-bezier(.2,.7,.2,1) both; }
+.surprise-note img { display: block; width: 100%; max-height: 260px; aspect-ratio: 4 / 5; object-fit: cover; border: 7px solid rgba(255,244,223,.94); box-shadow: 0 16px 38px rgba(0,0,0,.3); transform: rotate(-2deg); }
+.surprise-copy .eyebrow { margin-bottom: 12px; }
+.surprise-copy h4 { margin: 0 0 14px; color: var(--cream); font: 500 clamp(32px, 5vw, 58px)/.95 Georgia, 'Times New Roman', serif; letter-spacing: -.045em; }
+.surprise-copy h4 em { color: var(--coral-soft); font-weight: 500; }
+.surprise-copy p { max-width: none; margin: 0 0 16px; color: var(--muted); font-size: 14px; line-height: 1.85; }
+.surprise-copy > span { color: var(--gold); font: italic 16px/1.5 Georgia, 'Times New Roman', serif; }
+@media (max-width: 600px) {
+  .surprise-note { grid-template-columns: 86px minmax(0, 1fr); gap: 18px; padding: 16px; }
+  .surprise-note img { width: 86px; height: 108px; aspect-ratio: auto; border-width: 4px; }
+  .surprise-copy .eyebrow { font-size: 9px; }
+  .surprise-copy p { font-size: 13px; line-height: 1.65; }
+  .surprise-copy > span { font-size: 14px; }
+}

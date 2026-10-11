@@ -142,7 +142,16 @@ app.innerHTML = `
           </div>
           <h3>Okay. Now for the bit you were trying to <em>scroll past.</em></h3>
           <p>Your birthday assignment: accept the love, make a ridiculous wish, and let everyone spoil you a little.</p>
-          <button class="cta" id="reveal-button">Show me the big one <span class="arrow">✦</span></button>
+          <button class="cta" id="reveal-button" aria-expanded="false" aria-controls="surprise-note">Show me the big one <span class="arrow">✦</span></button>
+          <div class="surprise-note" id="surprise-note" hidden aria-live="polite">
+            <img src="/assets/memory-13.webp" alt="A little birthday memory, saved just for you" loading="lazy" decoding="async" />
+            <div class="surprise-copy">
+              <div class="eyebrow">the actual surprise</div>
+              <h4>Surprise, <em>my siz.</em></h4>
+              <p>You are the best—not just today, but in all the little moments that make life brighter. I hope you feel every bit as loved as you make the people around you feel.</p>
+              <span>Make a wish. This whole celebration is for you.</span>
+            </div>
+          </div>
         </div>
         <div class="confetti" id="confetti" aria-hidden="true"></div>
       </section>
@@ -168,6 +177,7 @@ const intro = $('#intro-overlay') as HTMLDivElement;
 const startButton = $('#start-button') as HTMLButtonElement;
 const revealButton = $('#reveal-button') as HTMLButtonElement;
 const replayButton = $('#replay-button') as HTMLButtonElement;
+const surpriseNote = $('#surprise-note') as HTMLDivElement;
 const revealCard = $('#reveal-card') as HTMLDivElement;
 const progress = $('#progress') as HTMLDivElement;
 const toast = $('#toast') as HTMLDivElement;
@@ -246,17 +256,23 @@ $('#photo-next')?.addEventListener('click', () => updatePhoto(currentPhoto + 1))
 
 revealButton.addEventListener('click', () => {
   revealCard.classList.add('is-open');
-  revealButton.textContent = 'The surprise is open ✦';
+  surpriseNote.hidden = false;
+  surpriseNote.classList.add('is-revealed');
+  revealButton.setAttribute('aria-expanded', 'true');
+  revealButton.innerHTML = 'A little love, just for you <span class="arrow">✦</span>';
   revealButton.disabled = true;
   createConfetti();
-  showToast('The stars have entered the chat.');
-  window.setTimeout(() => $('#chapter-five')?.scrollIntoView({ behavior: 'smooth' }), 1100);
+  showToast('Surprise, my siz. You are so loved.');
+  window.setTimeout(() => surpriseNote.scrollIntoView({ behavior: 'smooth', block: 'center' }), 180);
 });
 
 replayButton.addEventListener('click', () => {
   revealCard.classList.remove('is-open');
+  surpriseNote.hidden = true;
+  surpriseNote.classList.remove('is-revealed');
   revealButton.disabled = false;
-  revealButton.innerHTML = 'Open the surprise <span class="arrow">✦</span>';
+  revealButton.setAttribute('aria-expanded', 'false');
+  revealButton.innerHTML = 'Show me the big one <span class="arrow">✦</span>';
   window.scrollTo({ top: 0, behavior: 'smooth' });
   window.setTimeout(() => intro.classList.remove('is-hidden'), 520);
 });
