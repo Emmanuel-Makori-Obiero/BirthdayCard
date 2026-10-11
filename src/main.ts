@@ -1,4 +1,3 @@
-import type { Group } from 'three';
 import './style.css';
 
 type Photo = { src: string; title: string; alt: string };
@@ -93,19 +92,36 @@ app.innerHTML = `
         </div>
       </section>
 
+      <section class="cinema-chapter" id="chapter-cinema" aria-labelledby="cinema-title">
+        <div class="cinema-heading">
+          <div class="chapter-label">little moments / on repeat</div>
+          <h3 id="cinema-title">Your own tiny <em>birthday film.</em></h3>
+          <p>The smile, the glow, the whole main-character thing.</p>
+        </div>
+        <div class="cinema-collage" aria-label="A moving collage of birthday memories">
+          ${[2, 5, 8, 11, 14, 17].map((photoIndex, tile) => `
+            <figure class="cinema-tile tile-${tile + 1}">
+              <img src="${photos[photoIndex % photos.length].src}" alt="${photos[photoIndex % photos.length].alt}" loading="lazy" decoding="async" data-cinema-tile="${tile}" />
+            </figure>
+          `).join('')}
+          <div class="cinema-stamp" aria-hidden="true">MEL<br/><span>ON FILM</span></div>
+        </div>
+        <button class="collage-toggle" id="collage-toggle" type="button" aria-pressed="true">Pause the memories <span aria-hidden="true">Ⅱ</span></button>
+      </section>
+
       <section class="chapter avatar-chapter" id="chapter-three">
         <div class="chapter-inner">
           <div class="avatar-intro">
             <div>
               <div class="chapter-label">03 / your tiny hype crew</div>
-              <h3>We hired two small weirdos to <em>celebrate you.</em></h3>
+              <h3>We hired a tiny dance crew to <em>celebrate you.</em></h3>
             </div>
-            <p>They are not very good at speeches, but they are excellent at standing around looking festive. Drag them around. Tap for a little mischief.</p>
+            <p>A little birthday dance, just for you. Drag the stage around and tap for a little mischief.</p>
           </div>
           <div class="avatar-stage">
             <canvas id="avatar-canvas" aria-label="Interactive 3D birthday avatars"></canvas>
             <div class="avatar-badge">made of stardust<span>and good wishes</span></div>
-            <div class="avatar-hint">drag them around · tap for a surprise</div>
+            <div class="avatar-hint">watch the little dance · drag to explore</div>
           </div>
           <div class="memory-ribbon" aria-label="More little moments">
             <img src="/assets/memory-06.webp" alt="A candid daytime smile" loading="lazy" decoding="async" />
@@ -266,10 +282,76 @@ window.addEventListener('scroll', () => {
   progress.style.width = `${max ? (window.scrollY / max) * 100 : 0}%`;
 });
 
+// Keep the cinematic collage dormant until it is close to view; rotate one frame at a time.
+const collage = $('#chapter-cinema');
+const collageToggle = $('#collage-toggle') as HTMLButtonElement | null;
+const collageTiles = Array.from(document.querySelectorAll<HTMLImageElement>('[data-cinema-tile]'));
+let collageVisible = false;
+let collageRunning = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+let nextCinemaPhoto = 0;
+let nextCinemaTile = 0;
+let collageTimer: number | undefined;
+let collageLoading = false;
+function updateCollageControl() {
+  if (!collageToggle) return;
+  collageToggle.setAttribute('aria-pressed', String(collageRunning));
+  collageToggle.innerHTML = collageRunning
+    ? 'Pause the memories <span aria-hidden="true">Ⅱ</span>'
+    : 'Play the memories <span aria-hidden="true">▶</span>';
+}
+function startCollage() {
+  if (collageTimer || !collageVisible || !collageRunning) return;
+  collageTimer = window.setInterval(() => {
+    if (document.hidden || collageTiles.length === 0 || collageLoading) return;
+    const tile = collageTiles[nextCinemaTile % collageTiles.length];
+    const candidate = photos[nextCinemaPhoto % photos.length];
+    nextCinemaTile += 1;
+    nextCinemaPhoto += 1;
+    if (tile.src.endsWith(candidate.src)) return;
+    collageLoading = true;
+    const incoming = new Image();
+    incoming.decoding = 'async';
+    incoming.onload = () => {
+      tile.classList.add('is-changing');
+      window.setTimeout(() => {
+        tile.src = candidate.src;
+        tile.alt = candidate.alt;
+        tile.classList.remove('is-changing');
+        collageLoading = false;
+      }, 260);
+    };
+    incoming.onerror = () => { collageLoading = false; };
+    incoming.src = candidate.src;
+  }, 1250);
+}
+function stopCollage() {
+  if (collageTimer) window.clearInterval(collageTimer);
+  collageTimer = undefined;
+}
+collageToggle?.addEventListener('click', () => {
+  collageRunning = !collageRunning;
+  updateCollageControl();
+  if (collageRunning) startCollage(); else stopCollage();
+});
+updateCollageControl();
+if ('IntersectionObserver' in window && collage) {
+  const collageObserver = new IntersectionObserver((entries) => {
+    collageVisible = entries.some((entry) => entry.isIntersecting);
+    if (collageVisible) startCollage(); else stopCollage();
+  }, { rootMargin: '120px 0px' });
+  collageObserver.observe(collage);
+} else {
+  collageVisible = true;
+  startCollage();
+}
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) stopCollage(); else startCollage();
+});
+
 // Load the 3D engine only when the visitor approaches this chapter.
 async function initAvatarExperience() {
   const THREE = await import('three');
-  const { GLTFLoader } = await import('three/examples/jsm/loaders/GLTFLoader.js');
+  const { FBXLoader } = await import('three/examples/jsm/loaders/FBXLoader.js');
 const canvas = $('#avatar-canvas') as HTMLCanvasElement;
 const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -302,36 +384,45 @@ function makeFallbackAvatar(color: number, accent: number, x: number) {
 const leftAvatar = makeFallbackAvatar(0x253764, 0x15172f, -.92);
 const rightAvatar = makeFallbackAvatar(0x5f2c5b, 0x2d1b39, .92);
 stage.add(leftAvatar, rightAvatar);
-const loader = new GLTFLoader();
-function loadAvatar(path: string, target: Group, fallback: Group) {
-  loader.load(path, (gltf) => {
-    const model = gltf.scene;
-    model.scale.setScalar(1.05);
-    model.position.y = -.72;
-    target.add(model);
-    fallback.visible = false;
-  }, undefined, () => { /* fallback remains visible */ });
+const fbxLoader = new FBXLoader();
+let danceMixer: import('three').AnimationMixer | undefined;
+function loadDanceAvatar() {
+  fbxLoader.load('/models/HipHopDancing.fbx', (model) => {
+    model.updateMatrixWorld(true);
+    const bounds = new THREE.Box3().setFromObject(model);
+    const size = bounds.getSize(new THREE.Vector3());
+    const scale = size.y > 0 ? 2.65 / size.y : 1;
+    model.scale.setScalar(scale);
+    model.position.set(
+      -((bounds.min.x + bounds.max.x) / 2) * scale,
+      -.77 - bounds.min.y * scale,
+      -((bounds.min.z + bounds.max.z) / 2) * scale,
+    );
+    stage.add(model);
+    leftAvatar.visible = false;
+    rightAvatar.visible = false;
+    if (model.animations.length) {
+      danceMixer = new THREE.AnimationMixer(model);
+      danceMixer.clipAction(model.animations[0]).play();
+    }
+  }, undefined, () => { /* Built-in characters remain as the lightweight fallback. */ });
 }
-// The generated GLBs are intentionally lazy-loaded so the opening scene and page scroller
-// stay responsive on mobile and slower connections. Lightweight Three.js fallbacks show first.
 const avatarChapter = $('#chapter-three');
-let avatarsRequested = false;
-const loadGeneratedAvatars = () => {
-  if (avatarsRequested) return;
-  avatarsRequested = true;
-  loadAvatar('/models/star-avatar.glb', leftAvatar, leftAvatar);
-  loadAvatar('/models/moon-avatar.glb', rightAvatar, rightAvatar);
-};
+let danceRequested = false;
+let avatarVisible = false;
 if ('IntersectionObserver' in window && avatarChapter) {
   const avatarObserver = new IntersectionObserver((entries) => {
-    if (entries.some((entry) => entry.isIntersecting)) {
-      loadGeneratedAvatars();
-      avatarObserver.disconnect();
+    avatarVisible = entries.some((entry) => entry.isIntersecting);
+    if (avatarVisible && !danceRequested) {
+      danceRequested = true;
+      loadDanceAvatar();
+      requestAnimationFrame(animate);
     }
   }, { rootMargin: '480px 0px' });
   avatarObserver.observe(avatarChapter);
 } else {
-  window.setTimeout(loadGeneratedAvatars, 1200);
+  avatarVisible = true;
+  window.setTimeout(() => { loadDanceAvatar(); requestAnimationFrame(animate); }, 1200);
 }
 
 let targetRotation = 0;
@@ -352,7 +443,10 @@ window.addEventListener('resize', resizeStage);
 resizeStage();
 const clock = new THREE.Clock();
 function animate() {
-  const elapsed = clock.getElapsedTime();
+  if (!avatarVisible || document.hidden) return;
+  const delta = clock.getDelta();
+  const elapsed = clock.elapsedTime;
+  danceMixer?.update(delta);
   currentRotation += (targetRotation - currentRotation) * .07;
   stage.rotation.y = currentRotation + Math.sin(elapsed * .22) * .08;
   leftAvatar.position.y = Math.sin(elapsed * 1.2) * .045;
@@ -362,7 +456,9 @@ function animate() {
   renderer.render(scene, camera);
   requestAnimationFrame(animate);
 }
-animate();
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && avatarVisible) requestAnimationFrame(animate);
+});
 
 }
 

@@ -188,3 +188,35 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--gold); outline-
   .memory-ribbon { gap: 10px; margin-top: 8px; flex-wrap: wrap; }
   .memory-ribbon span { flex-basis: 100%; text-align: center; margin-top: 4px; }
 }
+
+/* A living, full-bleed memory wall; images enter only as this chapter approaches. */
+.cinema-chapter { min-height: 100vh; padding: clamp(100px, 12vw, 160px) 7vw 84px; display: flex; flex-direction: column; justify-content: center; overflow: hidden; position: relative; isolation: isolate; background: radial-gradient(ellipse at 50% 70%, rgba(103,66,122,.22), transparent 54%); }
+.cinema-heading { width: min(1100px, 100%); margin: 0 auto 34px; position: relative; z-index: 2; }
+.cinema-heading .chapter-label { margin-bottom: 14px; }
+.cinema-heading h3 { margin: 0; color: var(--cream); font: 500 clamp(42px, 7vw, 86px)/.95 Georgia, 'Times New Roman', serif; letter-spacing: -.055em; }
+.cinema-heading h3 em { color: var(--coral-soft); font-weight: 500; }
+.cinema-heading p { color: var(--muted); margin: 14px 0 0; font-size: 14px; }
+.cinema-collage { width: min(1100px, 100%); height: clamp(330px, 53vw, 590px); margin: 0 auto; position: relative; display: grid; grid-template-columns: repeat(12, 1fr); grid-template-rows: repeat(6, 1fr); gap: clamp(7px, 1.3vw, 16px); perspective: 1000px; }
+.cinema-tile { margin: 0; overflow: hidden; position: relative; border: 1px solid rgba(255,244,223,.28); background: #21172c; box-shadow: 0 18px 50px rgba(0,0,0,.34); }
+.cinema-tile img { display: block; width: 100%; height: 100%; object-fit: cover; filter: saturate(.82); transform: scale(1.025); transition: opacity .52s ease, transform 1.3s cubic-bezier(.2,.7,.2,1), filter .6s ease; }
+.cinema-tile:hover img { transform: scale(1.1); filter: saturate(1); }
+.cinema-tile img.is-changing { opacity: .12; transform: scale(1.12); }
+.tile-1 { grid-area: 1 / 1 / 5 / 4; transform: rotate(-2deg); }
+.tile-2 { grid-area: 1 / 4 / 4 / 7; transform: rotate(1.5deg); }
+.tile-3 { grid-area: 1 / 7 / 5 / 10; transform: rotate(-1deg); }
+.tile-4 { grid-area: 1 / 10 / 4 / 13; transform: rotate(2deg); }
+.tile-5 { grid-area: 4 / 3 / 7 / 7; transform: rotate(-1deg); }
+.tile-6 { grid-area: 4 / 7 / 7 / 11; transform: rotate(1.3deg); }
+.cinema-stamp { position: absolute; left: 50%; top: 50%; z-index: 2; transform: translate(-50%,-50%) rotate(-7deg); padding: 15px 22px; color: #21172c; background: var(--gold); box-shadow: 0 8px 32px rgba(0,0,0,.28); text-align: center; font: 700 19px/1 Georgia, serif; letter-spacing: .09em; }
+.cinema-stamp span { font: 9px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .22em; }
+.collage-toggle { align-self: center; margin-top: 24px; border: 1px solid var(--line); border-radius: 999px; padding: 10px 16px; color: var(--cream); background: rgba(255,255,255,.04); cursor: pointer; font: 11px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .08em; text-transform: uppercase; }
+.collage-toggle:hover { border-color: var(--gold); background: rgba(244,203,123,.1); }
+@media (max-width: 760px) {
+  .cinema-chapter { min-height: 82vh; padding: 104px 18px 72px; }
+  .cinema-collage { height: clamp(310px, 86vw, 470px); gap: 7px; }
+  .cinema-stamp { padding: 11px 14px; font-size: 15px; }
+  .cinema-heading p { font-size: 13px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cinema-tile img { transition: none; }
+}
