@@ -135,7 +135,7 @@ app.innerHTML = `
       <section class="chapter reveal-chapter" id="chapter-four">
         <div class="reveal-card" id="reveal-card">
           <div class="chapter-label">04 / the moment</div>
-          <div class="reveal-memories" aria-label="A few more birthday memories">
+          <div class="reveal-memories" id="reveal-memories" aria-label="A few more birthday memories" hidden>
             <img src="/assets/memory-09.webp" alt="A sunlit portrait" loading="lazy" decoding="async" />
             <img src="/assets/memory-12.webp" alt="A candid everyday moment" loading="lazy" decoding="async" />
             <img src="/assets/memory-18.webp" alt="A cheerful close-up portrait" loading="lazy" decoding="async" />
@@ -178,6 +178,7 @@ const startButton = $('#start-button') as HTMLButtonElement;
 const revealButton = $('#reveal-button') as HTMLButtonElement;
 const replayButton = $('#replay-button') as HTMLButtonElement;
 const surpriseNote = $('#surprise-note') as HTMLDivElement;
+const revealMemories = $('#reveal-memories') as HTMLDivElement;
 const revealCard = $('#reveal-card') as HTMLDivElement;
 const progress = $('#progress') as HTMLDivElement;
 const toast = $('#toast') as HTMLDivElement;
@@ -256,6 +257,7 @@ $('#photo-next')?.addEventListener('click', () => updatePhoto(currentPhoto + 1))
 
 revealButton.addEventListener('click', () => {
   revealCard.classList.add('is-open');
+  revealMemories.hidden = false;
   surpriseNote.hidden = false;
   surpriseNote.classList.add('is-revealed');
   revealButton.setAttribute('aria-expanded', 'true');
@@ -268,6 +270,7 @@ revealButton.addEventListener('click', () => {
 
 replayButton.addEventListener('click', () => {
   revealCard.classList.remove('is-open');
+  revealMemories.hidden = true;
   surpriseNote.hidden = true;
   surpriseNote.classList.remove('is-revealed');
   revealButton.disabled = false;

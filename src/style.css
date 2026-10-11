@@ -237,3 +237,4 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--gold); outline-
   .surprise-copy p { font-size: 13px; line-height: 1.65; }
   .surprise-copy > span { font-size: 14px; }
 }
+.reveal-memories[hidden] { display: none; }
