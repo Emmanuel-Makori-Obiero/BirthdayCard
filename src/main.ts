@@ -384,6 +384,7 @@ document.addEventListener('visibilitychange', () => {
 async function initAvatarExperience() {
 const THREE = await import('three');
   const { FBXLoader } = await import('three/examples/jsm/loaders/FBXLoader.js');
+  const { clone: cloneSkinnedModel } = await import('three/examples/jsm/utils/SkeletonUtils.js');
 const canvas = $('#avatar-canvas') as HTMLCanvasElement;
 const lowPowerDevice = window.matchMedia('(max-width: 760px)').matches || (navigator.hardwareConcurrency > 0 && navigator.hardwareConcurrency <= 4);
 let renderer: import('three').WebGLRenderer;
@@ -397,7 +398,7 @@ try {
 renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, lowPowerDevice ? 1 : 1.5));
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(28, 1, .1, 100);
+const camera = new THREE.PerspectiveCamera(32, 1, .1, 100);
 camera.position.set(0, 1.25, 7.2);
 const stage = new THREE.Group();
 scene.add(stage);
@@ -425,7 +426,7 @@ const leftAvatar = makeFallbackAvatar(0x253764, 0x15172f, -.92);
 const rightAvatar = makeFallbackAvatar(0x5f2c5b, 0x2d1b39, .92);
 stage.add(leftAvatar, rightAvatar);
 const fbxLoader = new FBXLoader();
-let danceMixer: import('three').AnimationMixer | undefined;
+const danceMixers: import('three').AnimationMixer[] = [];
 function loadDanceAvatar() {
   fbxLoader.load('/models/HipHopDancing.fbx', (model) => {
     const danceClip = model.animations.find((clip) => clip.tracks.length > 0);
@@ -434,17 +435,26 @@ function loadDanceAvatar() {
     const bounds = new THREE.Box3().setFromObject(model);
     const size = bounds.getSize(new THREE.Vector3());
     const scale = size.y > 0 ? 2.65 / size.y : 1;
-    model.scale.setScalar(scale);
-    model.position.set(
-      -((bounds.min.x + bounds.max.x) / 2) * scale,
-      -.77 - bounds.min.y * scale,
-      -((bounds.min.z + bounds.max.z) / 2) * scale,
-    );
-    stage.add(model);
+    const dancers = [model, cloneSkinnedModel(model)];
+    dancers.forEach((dancer, index) => {
+      const dancerScale = scale * .72;
+      dancer.scale.setScalar(dancerScale);
+      dancer.position.set(
+        (index === 0 ? -.96 : .96) - ((bounds.min.x + bounds.max.x) / 2) * dancerScale,
+        -.77 - bounds.min.y * dancerScale,
+        -((bounds.min.z + bounds.max.z) / 2) * dancerScale,
+      );
+      stage.add(dancer);
+      const mixer = new THREE.AnimationMixer(dancer);
+      const action = mixer.clipAction(danceClip).setLoop(THREE.LoopRepeat, Infinity).play();
+      if (index === 1) {
+        action.time = danceClip.duration * .38;
+        mixer.update(0);
+      }
+      danceMixers.push(mixer);
+    });
     leftAvatar.visible = false;
     rightAvatar.visible = false;
-    danceMixer = new THREE.AnimationMixer(model);
-    danceMixer.clipAction(danceClip).setLoop(THREE.LoopRepeat, Infinity).play();
   }, undefined, () => { /* Built-in characters remain as the lightweight fallback. */ });
 }
 const avatarChapter = $('#chapter-three');
@@ -508,7 +518,7 @@ function animate() {
   lastRenderTime = frameTime;
   const delta = clock.getDelta();
   const elapsed = clock.elapsedTime;
-  danceMixer?.update(delta);
+  danceMixers.forEach((mixer) => mixer.update(delta));
   currentRotation += (targetRotation - currentRotation) * .07;
   stage.rotation.y = currentRotation + Math.sin(elapsed * .22) * .08;
   leftAvatar.position.y = Math.sin(elapsed * 1.2) * .045;
