@@ -151,6 +151,12 @@ app.innerHTML = `
               <p>You are the best—not just today, but in all the little moments that make life brighter. I hope you feel every bit as loved as you make the people around you feel.</p>
               <span>Make a wish. This whole celebration is for you.</span>
             </div>
+            <div class="pinterest-card">
+              <div class="eyebrow">one more little birthday card</div>
+              <div class="pinterest-frame">
+                <iframe data-src="https://assets.pinterest.com/ext/embed.html?id=9640586698932561" title="A birthday greeting card for Sunshine on Pinterest" width="345" height="714" frameborder="0" scrolling="no" loading="lazy" referrerpolicy="no-referrer"></iframe>
+              </div>
+            </div>
           </div>
         </div>
         <div class="confetti" id="confetti" aria-hidden="true"></div>
@@ -260,6 +266,8 @@ revealButton.addEventListener('click', () => {
   revealMemories.hidden = false;
   surpriseNote.hidden = false;
   surpriseNote.classList.add('is-revealed');
+  const pinFrame = surpriseNote.querySelector<HTMLIFrameElement>('.pinterest-frame iframe');
+  if (pinFrame && !pinFrame.hasAttribute('src')) pinFrame.src = pinFrame.dataset.src ?? '';
   revealButton.setAttribute('aria-expanded', 'true');
   revealButton.innerHTML = 'A little love, just for you <span class="arrow">✦</span>';
   revealButton.disabled = true;

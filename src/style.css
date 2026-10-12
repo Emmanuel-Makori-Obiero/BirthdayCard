@@ -238,3 +238,8 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--gold); outline-
   .surprise-copy > span { font-size: 14px; }
 }
 .reveal-memories[hidden] { display: none; }
+.pinterest-card { grid-column: 1 / -1; display: grid; justify-items: center; gap: 14px; margin-top: 8px; padding-top: 24px; border-top: 1px solid var(--line); }
+.pinterest-card .eyebrow { margin: 0; text-align: center; }
+.pinterest-frame { width: min(345px, 100%); height: 714px; max-height: 72vh; overflow: hidden; border: 1px solid var(--line); border-radius: 3px; background: rgba(255,255,255,.03); }
+.pinterest-frame iframe { display: block; width: 100%; height: 714px; border: 0; }
+@media (max-width: 600px) { .pinterest-frame { max-height: 68vh; } }
