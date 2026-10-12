@@ -153,9 +153,9 @@ app.innerHTML = `
             </div>
             <div class="pinterest-card">
               <div class="eyebrow">one more little birthday card</div>
-              <p class="pinterest-hint">Tap the play icon on the card to watch it. If it doesn’t appear, <a href="https://www.pinterest.com/pin/9640586698932561/" target="_blank" rel="noopener noreferrer">open it on Pinterest ↗</a>.</p>
+              <p class="pinterest-hint">Tap play to watch the birthday video. <a href="https://www.pinterest.com/pin/9640586698932561/" target="_blank" rel="noopener noreferrer">View the original Pin ↗</a></p>
               <div class="pinterest-frame">
-                <iframe data-src="https://assets.pinterest.com/ext/embed.html?id=9640586698932561" title="A birthday greeting card for Sunshine on Pinterest" width="345" height="714" frameborder="0" scrolling="no" loading="lazy" referrerpolicy="no-referrer"></iframe>
+                <video class="pinterest-video" data-src="https://v1.pinimg.com/videos/iht/expMp4/62/c3/93/62c3931837d21ef97173f5deab440043_720w.mp4" poster="https://i.pinimg.com/videos/thumbnails/originals/62/c3/93/62c3931837d21ef97173f5deab440043.0000000.jpg" controls playsinline preload="none" aria-label="Birthday greeting video for Sunshine"></video>
               </div>
             </div>
           </div>
@@ -267,8 +267,12 @@ revealButton.addEventListener('click', () => {
   revealMemories.hidden = false;
   surpriseNote.hidden = false;
   surpriseNote.classList.add('is-revealed');
-  const pinFrame = surpriseNote.querySelector<HTMLIFrameElement>('.pinterest-frame iframe');
-  if (pinFrame && !pinFrame.hasAttribute('src')) pinFrame.src = pinFrame.dataset.src ?? '';
+  const pinVideo = surpriseNote.querySelector<HTMLVideoElement>('.pinterest-video');
+  if (pinVideo && !pinVideo.dataset.loaded) {
+    pinVideo.src = pinVideo.dataset.src ?? '';
+    pinVideo.dataset.loaded = 'true';
+    pinVideo.load();
+  }
   revealButton.setAttribute('aria-expanded', 'true');
   revealButton.innerHTML = 'A little love, just for you <span class="arrow">✦</span>';
   revealButton.disabled = true;
