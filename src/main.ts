@@ -34,7 +34,7 @@ app.innerHTML = `
       <div class="intro-curtain" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
       <div class="intro-copy">
         <div class="eyebrow">a private note · press play when she is ready</div>
-        <h1>Hey birthday girl, this one’s <em>for you.</em></h1>
+        <h1>Hey, Sunshine. This one’s <em>for you.</em></h1>
         <p>No long speech. Just a few favourite faces, some camera-roll evidence, and a tiny bit of chaos.</p>
         <button class="cta" id="start-button">Press play <span class="arrow">↗</span></button>
       </div>
@@ -58,7 +58,7 @@ app.innerHTML = `
             <div class="scroll-hint"><i></i> keep going, we have receipts</div>
           </div>
           <div class="kicker-side">
-            <p class="chapter-dek">So here are a few little reminders of why people keep choosing your laugh, your energy, and your face in every group photo.</p>
+            <p class="chapter-dek">Sunshine, here are a few little reminders of why people keep choosing your laugh, your energy, and your face in every group photo.</p>
             <div class="memory-sprinkle" aria-label="A few favorite photos">
               <img src="/assets/memory-04.webp" alt="A sunny-day smile" loading="lazy" decoding="async" />
               <img src="/assets/memory-08.webp" alt="A soft-light portrait" loading="lazy" decoding="async" />
@@ -147,7 +147,7 @@ app.innerHTML = `
             <img src="/assets/memory-13.webp" alt="A little birthday memory, saved just for you" loading="lazy" decoding="async" />
             <div class="surprise-copy">
               <div class="eyebrow">the actual surprise</div>
-              <h4>Surprise, <em>my siz.</em></h4>
+              <h4>Surprise, <em>Sunshine.</em></h4>
               <p>You are the best—not just today, but in all the little moments that make life brighter. I hope you feel every bit as loved as you make the people around you feel.</p>
               <span>Make a wish. This whole celebration is for you.</span>
             </div>
@@ -159,7 +159,7 @@ app.innerHTML = `
       <section class="chapter final-chapter" id="chapter-five">
         <div class="chapter-inner">
           <div class="chapter-label">05 / end credits</div>
-          <h3>Happy birthday. <em>Seriously.</em></h3>
+          <h3>Happy birthday, <em>Sunshine.</em></h3>
           <p>I hope this year gives you more reasons to laugh until your stomach hurts, more soft places to land, and at least one excellent plot twist.</p>
           <button class="cta secondary" id="replay-button">Replay the story <span class="arrow">↻</span></button>
           <img class="final-memory" src="/assets/memory-19.webp" alt="One more lovely outdoor portrait" loading="lazy" decoding="async" />
