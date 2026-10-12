@@ -428,6 +428,13 @@ stage.add(leftAvatar, rightAvatar);
 const fbxLoader = new FBXLoader();
 const danceMixers: import('three').AnimationMixer[] = [];
 function loadDanceAvatar() {
+  const rumbaClipRequest = fetch('/animations/rumba.json')
+    .then((response) => {
+      if (!response.ok) throw new Error('Rumba animation could not be loaded');
+      return response.json();
+    })
+    .then((clipJson) => THREE.AnimationClip.parse(clipJson))
+    .catch(() => undefined);
   fbxLoader.load('/models/HipHopDancing.fbx', (model) => {
     const danceClip = model.animations.find((clip) => clip.tracks.length > 0);
     if (!danceClip) return; // Keep the built-in dancers visible if the FBX has no usable take.
@@ -435,6 +442,7 @@ function loadDanceAvatar() {
     const bounds = new THREE.Box3().setFromObject(model);
     const size = bounds.getSize(new THREE.Vector3());
     const scale = size.y > 0 ? 2.65 / size.y : 1;
+    const rumbaDancer = cloneSkinnedModel(model);
     const dancers = [model, cloneSkinnedModel(model)];
     dancers.forEach((dancer, index) => {
       const dancerScale = scale * .72;
@@ -455,6 +463,20 @@ function loadDanceAvatar() {
     });
     leftAvatar.visible = false;
     rightAvatar.visible = false;
+    void rumbaClipRequest.then((rumbaClip) => {
+      if (!rumbaClip) return;
+      const rumbaScale = scale * .56;
+      rumbaDancer.scale.setScalar(rumbaScale);
+      rumbaDancer.position.set(
+        -((bounds.min.x + bounds.max.x) / 2) * rumbaScale,
+        -.77 - bounds.min.y * rumbaScale,
+        -((bounds.min.z + bounds.max.z) / 2) * rumbaScale - .55,
+      );
+      stage.add(rumbaDancer);
+      const rumbaMixer = new THREE.AnimationMixer(rumbaDancer);
+      rumbaMixer.clipAction(rumbaClip).setLoop(THREE.LoopRepeat, Infinity).play();
+      danceMixers.push(rumbaMixer);
+    });
   }, undefined, () => { /* Built-in characters remain as the lightweight fallback. */ });
 }
 const avatarChapter = $('#chapter-three');
