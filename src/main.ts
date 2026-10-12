@@ -153,6 +153,7 @@ app.innerHTML = `
             </div>
             <div class="pinterest-card">
               <div class="eyebrow">one more little birthday card</div>
+              <p class="pinterest-hint">Tap the play icon on the card to watch it. If it doesn’t appear, <a href="https://www.pinterest.com/pin/9640586698932561/" target="_blank" rel="noopener noreferrer">open it on Pinterest ↗</a>.</p>
               <div class="pinterest-frame">
                 <iframe data-src="https://assets.pinterest.com/ext/embed.html?id=9640586698932561" title="A birthday greeting card for Sunshine on Pinterest" width="345" height="714" frameborder="0" scrolling="no" loading="lazy" referrerpolicy="no-referrer"></iframe>
               </div>
